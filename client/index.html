@@ -52,9 +52,16 @@
         el: '#sign-in-container'
       },
       function (res) {
+        if(res.status === 'SUCCESS') {
         console.log('in res', res)
         // res.idToken - id_token generated
         // res.claims - decoded id_token information
+          oktaSignIn.tokenManager.add('my_id_token', res);
+          return;
+        }
+        if(res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
+
+        }
       },
       function (err) {
         console.log('in err', err)
