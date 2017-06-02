@@ -31,7 +31,7 @@
       clientId: clientID,
       redirectUri: redirectUrl,
       authParams: {
-        responseType: 'id_token',
+        responseType: 'code',
         responseMode: 'okta_post_message',
         scopes: [
           'openid',
@@ -43,9 +43,14 @@
       },
       idpDisplay: 'PRIMARY',
       idps: [{
-    'type': 'FACEBOOK',
-    'id': '0oaaoatp5jSiVJukD0h7'
-      }]
+        'type': 'FACEBOOK',
+        'id': '0oaaoatp5jSiVJukD0h7'
+      }],
+    //   features: {
+    //     //rememberMe: true,
+    //     //selfServiceUnlock: true,
+    //     multiOptionalFactorEnroll: true
+    // }
     });
 
     oktaSignIn.renderEl({
@@ -54,9 +59,17 @@
       function (res) {
         if(res.status === 'SUCCESS') {
         console.log('in res', res)
-        // res.idToken - id_token generated
-        // res.claims - decoded id_token information
-          oktaSignIn.tokenManager.add('my_id_token', res);
+
+
+        // var id_token = res.id_token || res.idToken;
+        // oktaSignIn.tokenManager.add('my_id_token', res);
+        
+        // // send the token to the server for vaildation and access to resources:
+
+        // $.post("/sso/oidc", {"id_token": id_token}, function(data) {
+        // window.location.href="/secret";
+
+//    }
           return;
         }
         if(res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
