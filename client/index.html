@@ -14,6 +14,27 @@
   <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/css/okta-sign-in.min.css" type="text/css" rel="stylesheet">
   <!-- Optional, customizable css theme options. Link your own customized copy of this file or override styles in-line -->
   <link href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/css/okta-theme.css" type="text/css" rel="stylesheet">
+ <style>
+    body {
+      background-image: url('https://farm9.staticflickr.com/8332/8451032652_b2bf0bdadc_h.jpg');
+      background-repeat: no-repeat;
+      background-position: center center fixed;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+
+    #okta-login-container .button {
+      color: #ffffff;
+      background-color: #3a3f44;
+      border-color: #3a3f44;
+      background-image: linear-gradient(#484e55, #3a3f44 60%, #313539);
+      background-repeat: no-repeat;
+      filter: none;
+    }
+</style>
+
 </head>
 <body>
   <!-- Render the login widget here -->
@@ -45,7 +66,8 @@
       idps: [{
     'type': 'FACEBOOK',
     'id': '0oaaoatp5jSiVJukD0h7'
-      }]
+      }],
+
     });
 
     oktaSignIn.renderEl({
@@ -53,13 +75,50 @@
       },
       function (res) {
         if(res.status === 'SUCCESS') {
-        console.log('in res', res)
-        // res.idToken - id_token generated
-        // res.claims - decoded id_token information
+          console.log('in res', res)
+          // res.idToken - id_token generated
+          // res.claims - decoded id_token information
           oktaSignIn.tokenManager.add('my_id_token', res);
+          // error check the id_token  
+
+          // check the issuer
+          if (res.claims.iss !== orgUrl) {
+            // do not lot in 
+          } else {
+            console.log('Good issuer');
+          }
+
+          // check the Audience (ClientID)
+          if (res.claims.aud !== clientID) {
+            // do not log in
+          } else {
+            console.log('Good audience');
+          }
+
+          // validate the signature of the ID Token 
+
+
+          // check the expiration time
+          if (res.claims.exp < Date.now()/1000) {
+            // do not log itn
+          } else {
+            console.log('Good expiration');
+            console.log('res.claims.exp: ', res.claims.exp);
+            console.log('Now()', Date.now());
+            console.log(res.claims.exp - Date.now()/1000);
+
+          }
+
+          // check to make sure it was issues recently
+          if (res.claims.iat < Date.now()/1000 - 5) {
+            // do not log in.
+          }  else {
+            console.log('Good issued less than 5 seconds ago');
+          }
+
           return;
-        }
-        if(res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
+
+        } else if(res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
 
         }
       },
