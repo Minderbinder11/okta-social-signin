@@ -35,14 +35,12 @@ var renderOktaWidget = function() {
       oktaSignIn.renderEl(
       { el: '#sign-in-container' },
       function (res) {
-
+        console.log('this only runs after the user clicks sign in: , ', res)
+        oktaSignIn.tokenManager.add('my_id_token', res);
         if(res.status === 'SUCCESS') {
-          oktaSignIn.tokenManager.add('my_id_token', res);
-
-          // check the issuer
           if (  res.claims.iss === orgUrl && res.claims.aud === clientID &&
                 res.claims.exp > Date.now()/1000 && res.claims.iat > Date.now()/1000 - 10 ) {
-     	        showAuthUI(true);
+     	        showAuthUI(true, res.claims);
           } 
 
         } else if (res.status === 'FORGOT_PASSWORD_EMAIL_SENT') {
@@ -61,6 +59,7 @@ var renderOktaWidget = function() {
 
 
 var oktaSessionsMe = function (callBack) {
+  console.log('in Okta Sessions Callback before AJAX');
   $.ajax({
       type: "GET",
       dataType: 'json',
@@ -70,7 +69,6 @@ var oktaSessionsMe = function (callBack) {
       },
       success: function (data) {
           console.log("My session: ", data);
-         // console.log(data);
           sessionStorage.setItem( 'sessionTokenKey' , JSON.stringify(data));
           return callBack(true);
       },
@@ -89,10 +87,16 @@ var callSessionsMe = function () {
     });
 };    
 
-var showAuthUI = function (isAuthenticated) {
+var showAuthUI = function (isAuthenticated, claims) {
     if (isAuthenticated) {
         console.log("authenticated user - hiding widget");
         $("#apicall-buttons").show();
+        
+        if (claims !== undefined) {
+          $('#first-name').append(claims.given_name);
+          $('#last-name').append(claims.family_name);
+        }
+        
         $('#sign-in-container').hide();
     }
     else {

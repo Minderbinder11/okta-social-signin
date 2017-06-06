@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Example Okta Sign-In Widget</title>
 
+
   <script src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/1.7.0/js/okta-sign-in.min.js" type="text/javascript"></script>
 
   <script
@@ -24,6 +25,38 @@
 
   <div id="apicall-buttons" style="padding-top:20px">
     <h1><span id="logged-in-res"></span></h1>
+    <table>
+      <th>
+        Property
+      </th>
+      <th>
+        Value
+      </th>
+      <tr>
+        <td>First Name</td>
+        <td id="first-name"></td>
+      </tr>  
+      <tr>
+        <td>Last Name</td>
+        <td id="last-name"></td>
+      </tr>
+      <tr>
+        <td>Username</td>
+        <td id="iss"></td>
+      </tr>
+      <tr>
+        <td>Token Issuer</td>
+        <td id="iat"></td>
+      </tr>       
+      <tr>
+        <td>Token Issued At</td>
+        <td id="iat"></td>
+      </tr> 
+       <tr>
+        <td>Token Expires</td>
+        <td id="exp"></td>
+      </tr>           
+    </table>
     <br />
     <button id="btnSignOut" class="btn btn-lg btn-primary">Sign Out</button>
     <button id="btnRenewIDToken" class="btn btn-lg btn-primary">Renew Token</button>

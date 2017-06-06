@@ -16,3 +16,17 @@ body {
   background-repeat: no-repeat;
   filter: none;
 }
+
+#okta-sign-in {
+  background-color: #fbfbfb;
+}
+
+#apicall-buttons {
+  margin: 50px auto;
+  height: 500px;
+  border-radius: 5px;
+  border: 2px solid grey;
+  width: 80%;
+  padding-top: 20px;
+  background-color: white;
+}
