@@ -29,6 +29,7 @@ var renderOktaWidget = function() {
   oktaSessionsMe(function (authenticated) {
 
     console.log('oktasessionsMe Authenticated', authenticated)
+    
     showAuthUI(authenticated);
     if(!authenticated) { 
 
@@ -93,8 +94,13 @@ var showAuthUI = function (isAuthenticated, claims) {
         $("#apicall-buttons").show();
         
         if (claims !== undefined) {
+          $('#logged-in-res').append(claims.name);
           $('#first-name').append(claims.given_name);
           $('#last-name').append(claims.family_name);
+          $('#username').append(claims.preferred_username);
+          $('#iss').append(claims.iss);
+          $('#iat').append(new Date(claims.iat*1000));
+          $('#exp').append(new Date(claims.exp*1000));
         }
         
         $('#sign-in-container').hide();
@@ -134,13 +140,11 @@ $('#btnSignOut').click(function () {
         if (authenticated) {
             var sessionTokenString = sessionStorage.getItem('sessionTokenKey');
             if (sessionTokenString) {
-                var sessionToken = JSON.parse(sessionTokenString);
-                var sessionId = sessionToken.id;
-                console.log('closing session ' + sessionId);
+
                 closeSession(function (success) {
                     console.log('Is session closed? ' + success);
                     if (success) {
-                        //showAuthUI(false);
+                        showAuthUI(false);
                         location.reload(false);
                         //$('#claims').hide();
 
@@ -150,6 +154,16 @@ $('#btnSignOut').click(function () {
         }
     });
 });
+
+  $('#btnRenewIDToken').click(function () {
+      oktaSignIn.token.refresh(null, function (res) {
+          console.log('New ID token: ', res);
+          showAuthUI(true, res.claims)
+          return res;
+      }, {
+          scopes: [ 'openid', 'email', 'profile', 'address', 'phone']
+      });
+  });
 
 
 renderOktaWidget();

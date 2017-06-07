@@ -30,3 +30,29 @@ body {
   padding-top: 20px;
   background-color: white;
 }
+
+.colA {
+  width: 40%;
+}
+
+.user-info {
+  margin: 20px auto;
+}
+
+th{
+  background-color: #70b3c3;
+  color: white;
+  text-align: left;
+  padding: 2px 5px;
+}
+
+td {
+  border: 1px lightgrey solid;
+  padding: 2px 5px;
+}
+
+.welcome-msg {
+  margin-left: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
