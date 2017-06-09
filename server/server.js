@@ -1,13 +1,11 @@
 //server.js
 import express 				from 'express';
-import bodyParser 	 	from 'body-parser';
-import session 			 	from 'express-session';
-import cookieParser  	from 'cookie-parser';
 import path 					from 'path';
+//import config 				from '../../config.json';
 
 
-const clientId = 'zVhWxduDfhCXiE4FJUOK';
-const clientSecret = '0KYC0ELnG3Atke5d6PBarrHTRlQFVkZ5m2nt_4lP';
+// const clientId = 'zVhWxduDfhCXiE4FJUOK';
+// const clientSecret = '0KYC0ELnG3Atke5d6PBarrHTRlQFVkZ5m2nt_4lP';
 
 const app = express();
 

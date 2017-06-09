@@ -1,0 +1,9 @@
+// config.js
+const clientId = 'zVhWxduDfhCXiE4FJUOK';
+const clientSecret = '0KYC0ELnG3Atke5d6PBarrHTRlQFVkZ5m2nt_4lP';
+
+
+{
+	"clientId": "zVhWxduDfhCXiE4FJUOK",
+	"clientSecret": "0KYC0ELnG3Atke5d6PBarrHTRlQFVkZ5m2nt_4lP"
+}

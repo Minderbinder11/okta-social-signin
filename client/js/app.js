@@ -1,5 +1,4 @@
 //app.js
-// var qs = require('querystring');
 
 var orgUrl = 'https://dev-477147.oktapreview.com';
 const clientID = 'zVhWxduDfhCXiE4FJUOK';
@@ -27,7 +26,6 @@ var oktaSignIn = new OktaSignIn({
 var renderOktaWidget = function() {
 
   oktaSignIn.session.exists(function (authenticated) {
-
     if(!authenticated) { 
 
       $("#apicall-buttons").hide();
@@ -44,9 +42,9 @@ var renderOktaWidget = function() {
 
           if (  res.claims.iss === orgUrl && res.claims.aud === clientID &&
                 res.claims.exp > Date.now()/1000 && res.claims.iat > Date.now()/1000 - 10 ) {
-     	      
-            $("#apicall-buttons").show();
-            $('#sign-in-container').hide();
+     	      $("#apicall-buttons").html(loggedInHtml);
+            //$("#apicall-buttons").show();
+      
             $('#logged-in-res').append(res.claims.name);
             $('#first-name').append(res.claims.given_name);
             $('#last-name').append(res.claims.family_name);
@@ -66,19 +64,27 @@ var renderOktaWidget = function() {
       },
       function (err) { console.log('in err', err);
       });
+
     } else {
-      $("#apicall-buttons").show();
       $('#sign-in-container').hide();
+      $("#apicall-buttons").html(loggedInHtml);
+      var token = signIn.tokenManager.get('my_id_token');
+      console.log('token');
+      $('#logged-in-res').append(token.claims.name);
+      $('#first-name').append(token.claims.given_name);
+      $('#last-name').append(token.claims.family_name);
+      $('#username').append(token.claims.preferred_username);
+      $('#iss').append(token.claims.iss);
+      $('#iat').append(new Date(token.claims.iat*1000));
+      $('#exp').append(new Date(token.claims.exp*1000)); 
+      console.log('hello???');
+
     }
    });     
 };     
 
-
 $('#btnSignOut').click(function () {
-
   oktaSignIn.session.exists(function (authenticated) {
-    
-
     
     if (authenticated) {
       sessionStorage.removeItem('sessionTokenKey');
@@ -88,24 +94,59 @@ $('#btnSignOut').click(function () {
           $("#apicall-buttons").hide();
           $('#sign-in-container').show();
           location.reload(true)
-        
       });
     };
   });
 });
 
-  $('#btnRenewIDToken').click(function () {
-      oktaSignIn.tokenManager.refresh('my_id_token').
-      then(function (res) {
-        
-        console.log('token manager refresh: ', res);  
-        var d =    
-        console.log('New ID token: ', new Date(res.claims.iat*1000));
-        $('#iat').html(new Date(res.claims.iat*1000));
-        $('#exp').html(new Date(res.claims.exp*1000));
-        
-      });
-  });
+$('#btnRenewIDToken').click(function () {
+    oktaSignIn.tokenManager.refresh('my_id_token').
+    then(function (res) {
+      
+      console.log('token manager refresh: ', res);  
+      var d =    
+      console.log('New ID token: ', new Date(res.claims.iat*1000));
+      $('#iat').html(new Date(res.claims.iat*1000));
+      $('#exp').html(new Date(res.claims.exp*1000));
+      
+    });
+});
 
+var loggedInHtml = `<h1 class="welcome-msg">Welcome <span id="logged-in-res"></span></h1>
+    <table class="user-info">
+      <th class="colA">
+        Property
+      </th>
+      <th>
+        Value
+      </th>
+      <tr>
+        <td class="colA">First Name</td>
+        <td id="first-name"></td>
+      </tr>  
+      <tr>
+        <td class="colA">Last Name</td>
+        <td id="last-name"></td>
+      </tr>
+      <tr>
+        <td class="colA">Username</td>
+        <td id="username"></td>
+      </tr>
+      <tr>
+        <td>Token Issuer</td>
+        <td id="iss"></td>
+      </tr>       
+      <tr>
+        <td>Token Issued At</td>
+        <td id="iat"></td>
+      </tr> 
+       <tr>
+        <td>Token Expires At</td>
+        <td id="exp"></td>
+      </tr>           
+    </table>
+    <br />
+    <button id="btnSignOut" class="btn btn-lg btn-primary">Sign Out</button>
+    <button id="btnRenewIDToken" class="btn btn-lg btn-primary">Renew Token</button>`;
 
 renderOktaWidget();
