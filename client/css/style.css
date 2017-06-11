@@ -56,3 +56,44 @@ td {
   font-weight: 600;
   font-size: 16px;
 }
+
+.buttons {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+}
+
+#btnSignOut {
+  margin: 5px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  height: 30px;
+  width: 100px;
+  color: white;
+  background-color: rgba(239, 63, 63, 0.75);
+  border: 2px solid rgba(239, 63, 63, 0.75);
+  border-radius: 4px
+}
+
+#btnRenewIDToken {
+  margin: 5px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  height: 30px;
+  width: 100px;
+  color: white;
+  background-color: #9898d6;
+  border: 2px solid #9898d6;
+  border-radius: 4px;
+}
+
+#btnRenewIDToken:active {
+  background-color: blue;
+  border: 2px solid blue;
+}
+
+#btnSignOut:active {
+  background-color: red;
+  border: 2px solid red;
+}
+

@@ -1,118 +1,99 @@
 //app.js
+  var orgUrl = 'https://dev-477147.oktapreview.com';
+  const clientID = 'zVhWxduDfhCXiE4FJUOK';
+  var redirectUrl = 'http://localhost:8000/authorization-code/callback';
+  
+$(document).ready(function(){ 
 
-var orgUrl = 'https://dev-477147.oktapreview.com';
-const clientID = 'zVhWxduDfhCXiE4FJUOK';
-var redirectUrl = 'http://localhost:8000/authorization-code/callback';
+  var oktaSignIn = new OktaSignIn({
+    baseUrl: orgUrl,
+    // OpenID Connect options
+    clientId: clientID,
+    redirectUri: redirectUrl,
+    authParams: {
+      responseType: 'id_token',
+      responseMode: 'okta_post_message',
+      scopes: [ 'openid', 'email', 'profile', 'address', 'phone']
+    },
+    idpDisplay: 'PRIMARY',
+    idps: [{
+  		'type': 'FACEBOOK',
+  		'id': '0oaaq8fqwoLWjGWqI0h7'
+    }],
+    logo: './img/updateUser.png'
 
-
-var oktaSignIn = new OktaSignIn({
-  baseUrl: orgUrl,
-  // OpenID Connect options
-  clientId: clientID,
-  redirectUri: redirectUrl,
-  authParams: {
-    responseType: 'id_token',
-    responseMode: 'okta_post_message',
-    scopes: [ 'openid', 'email', 'profile', 'address', 'phone']
-  },
-  idpDisplay: 'PRIMARY',
-  idps: [{
-		'type': 'FACEBOOK',
-		'id': '0oaaq8fqwoLWjGWqI0h7'
-  }],
-
-});
-
-var renderOktaWidget = function() {
-
-  oktaSignIn.session.exists(function (authenticated) {
-    if(!authenticated) { 
-
-      $("#apicall-buttons").hide();
-      $('#sign-in-container').show();
-
-      oktaSignIn.renderEl({ 
-        el: '#sign-in-container' 
-      },
-      function (res) {
-
-        oktaSignIn.tokenManager.add('my_id_token', res);
-        
-        if(res.status === 'SUCCESS') {
-
-          if (  res.claims.iss === orgUrl && res.claims.aud === clientID &&
-                res.claims.exp > Date.now()/1000 && res.claims.iat > Date.now()/1000 - 10 ) {
-     	      $("#apicall-buttons").html(loggedInHtml);
-            //$("#apicall-buttons").show();
-      
-            $('#logged-in-res').append(res.claims.name);
-            $('#first-name').append(res.claims.given_name);
-            $('#last-name').append(res.claims.family_name);
-            $('#username').append(res.claims.preferred_username);
-            $('#iss').append(res.claims.iss);
-            $('#iat').append(new Date(res.claims.iat*1000));
-            $('#exp').append(new Date(res.claims.exp*1000)); 
-          } 
-
-        } else if (res.status === 'FORGOT_PASSWORD_EMAIL_SENT') {
-          
-          console.log('User %s sent recovery code via email to reset password', res.username);
-        } else if (res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
-            // res.username - value user entered in the unlock account form
-            console.log('User %s sent recovery code via email to unlock account', res.username);
-        }
-      },
-      function (err) { console.log('in err', err);
-      });
-
-    } else {
-      $('#sign-in-container').hide();
-      $("#apicall-buttons").html(loggedInHtml);
-      var token = signIn.tokenManager.get('my_id_token');
-      console.log('token');
-      $('#logged-in-res').append(token.claims.name);
-      $('#first-name').append(token.claims.given_name);
-      $('#last-name').append(token.claims.family_name);
-      $('#username').append(token.claims.preferred_username);
-      $('#iss').append(token.claims.iss);
-      $('#iat').append(new Date(token.claims.iat*1000));
-      $('#exp').append(new Date(token.claims.exp*1000)); 
-      console.log('hello???');
-
-    }
-   });     
-};     
-
-$('#btnSignOut').click(function () {
-  oktaSignIn.session.exists(function (authenticated) {
-    
-    if (authenticated) {
-      sessionStorage.removeItem('sessionTokenKey');
-      oktaSignIn.tokenManager.remove('my_id_token');
-      
-      oktaSignIn.session.close(function () {
-          $("#apicall-buttons").hide();
-          $('#sign-in-container').show();
-          location.reload(true)
-      });
-    };
   });
+
+  var renderOktaWidget = function() {
+
+    oktaSignIn.session.exists(function (authenticated) {
+
+      if(!authenticated) { 
+        $('body').html('<div id="sign-in-container"></div>');
+        oktaSignIn.renderEl({ 
+          el: '#sign-in-container' 
+        },
+        function (res) {
+          oktaSignIn.tokenManager.add('my_id_token', res);
+          if(res.status === 'SUCCESS') {
+            if (  res.claims.iss === orgUrl && res.claims.aud === clientID &&
+                  res.claims.exp > Date.now()/1000 && res.claims.iat > Date.now()/1000 - 10 ) {
+              $('body').html(loggedInHtml);
+              $('#logged-in-res').append(res.claims.name);
+              $('#first-name').append(res.claims.given_name);
+              $('#last-name').append(res.claims.family_name);
+              $('#username').append(res.claims.preferred_username);
+              $('#iss').append(res.claims.iss);
+              $('#iat').append(new Date(res.claims.iat*1000));
+              $('#exp').append(new Date(res.claims.exp*1000)); 
+            } 
+
+          } else if (res.status === 'FORGOT_PASSWORD_EMAIL_SENT') {
+            
+            console.log('User %s sent recovery code via email to reset password', res.username);
+          } else if (res.status === 'UNLOCK_ACCOUNT_EMAIL_SENT') {
+              // res.username - value user entered in the unlock account form
+              console.log('User %s sent recovery code via email to unlock account', res.username);
+          }
+        },
+        function (err) { console.log('in err', err);
+        });
+      } else {
+        $('body').html(loggedInHtml);
+      }
+     });     
+  };     
+
+
+  $('body').on('click', '#btnSignOut', function () {
+
+   oktaSignIn.session.exists(function (authenticated) {
+      if (authenticated) {
+        sessionStorage.removeItem('sessionTokenKey');
+        oktaSignIn.tokenManager.remove('my_id_token');
+        $('body').html('<div id="sign-in-container"></div>');
+        
+        oktaSignIn.session.close(function () {
+          location.reload(true);
+        });
+      };
+   });
+  });
+
+  $('body').on('click', '#btnRenewIDToken', function () {
+      oktaSignIn.tokenManager.refresh('my_id_token').
+      then(function (res) {
+        $('#iat').html(new Date(res.claims.iat*1000));
+        $('#exp').html(new Date(res.claims.exp*1000));
+      });
+  });
+
+  renderOktaWidget();
+
 });
 
-$('#btnRenewIDToken').click(function () {
-    oktaSignIn.tokenManager.refresh('my_id_token').
-    then(function (res) {
-      
-      console.log('token manager refresh: ', res);  
-      var d =    
-      console.log('New ID token: ', new Date(res.claims.iat*1000));
-      $('#iat').html(new Date(res.claims.iat*1000));
-      $('#exp').html(new Date(res.claims.exp*1000));
-      
-    });
-});
-
-var loggedInHtml = `<h1 class="welcome-msg">Welcome <span id="logged-in-res"></span></h1>
+var loggedInHtml = `<div id="apicall-buttons">
+  <h1 class="welcome-msg">Welcome <span id="logged-in-res"></span></h1>
     <table class="user-info">
       <th class="colA">
         Property
@@ -146,7 +127,8 @@ var loggedInHtml = `<h1 class="welcome-msg">Welcome <span id="logged-in-res"></s
       </tr>           
     </table>
     <br />
-    <button id="btnSignOut" class="btn btn-lg btn-primary">Sign Out</button>
-    <button id="btnRenewIDToken" class="btn btn-lg btn-primary">Renew Token</button>`;
-
-renderOktaWidget();
+    <div class="buttons">
+      <button id="btnSignOut" class="btn btn-lg btn-primary">Sign Out</button>
+      <button id="btnRenewIDToken" class="btn btn-lg btn-primary">Renew Token</button>
+    </div>  
+    </div>`;
