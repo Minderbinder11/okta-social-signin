@@ -20,6 +20,7 @@ $(document).ready(function(){
   		'type': 'FACEBOOK',
   		'id': '0oaaq8fqwoLWjGWqI0h7'
     }],
+    logo: './img/updateUser.png'
 
   });
 
