@@ -20,8 +20,13 @@ $(document).ready(function(){
   		'type': 'FACEBOOK',
   		'id': '0oaaq8fqwoLWjGWqI0h7'
     }],
-    logo: './img/updateUser.png'
-
+    logo: './img/updateUser.png',
+    i18n: {
+      // Overriding English properties
+      'en': {
+        'primaryauth.title': 'Connect with ACME',
+      }
+    }
   });
 
   var renderOktaWidget = function() {
