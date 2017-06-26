@@ -22,7 +22,6 @@ $(document).ready(function(){
     }],
     logo: './img/updateUser.png',
     i18n: {
-      // Overriding English properties
       'en': {
         'primaryauth.title': 'Connect with ACME',
       }
